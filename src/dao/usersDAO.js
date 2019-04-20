@@ -61,7 +61,7 @@ export default class UsersDAO {
       // TODO Ticket: Durable Writes
       // Use a more durable Write Concern for this operation.
       let { name, email, password } = userInfo;
-      await users.insertOne({ name: name, email: email, password: password })
+      await users.insertOne({ name: name, email: email, password: password }, { w: "majority" })
       return { success: true }
     } catch (e) {
       if (String(e).startsWith("MongoError: E11000 duplicate key error")) {
