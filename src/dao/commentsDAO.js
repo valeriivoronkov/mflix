@@ -77,7 +77,7 @@ export default class CommentsDAO {
       // update the "text" and "date" fields of the selected comment.
       const updateResponse = await comments.updateOne(
         { _id: ObjectId(commentId), email: userEmail },
-        { $set: { text, date } }
+        { $set: { text, date } },
       )
 
       return updateResponse
@@ -102,7 +102,7 @@ export default class CommentsDAO {
       // Use the userEmail and commentId to delete the proper comment.
       const deleteResponse = await comments.deleteOne({
         _id: ObjectId(commentId),
-        email: userEmail
+        email: userEmail,
       })
 
       return deleteResponse
@@ -123,7 +123,11 @@ export default class CommentsDAO {
     try {
       // TODO Ticket: User Report
       // Return the 20 users who have commented the most on MFlix.
-      const pipeline = []
+      const pipeline = [
+        { $group: { _id: "$email", count: { $sum: 1 } } },
+        { $sort: { count: -1 } },
+        { $limit: 20 }
+      ]
 
       // TODO Ticket: User Report
       // Use a more durable Read Concern here to make sure this data is not stale.
